@@ -1,0 +1,38 @@
+// Initial variable overrides
+$primary: #0d6efd; // Bootstrap Default Blue - can be changed later
+
+// Import Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+// Global Font
+body {
+    font-family: 'Inter', sans-serif !important;
+}
+
+// Template Styles
+@import "template/core";
+@import "template/theme-default";
+@import "template/page-auth";
+@import "template/app-calendar";
+
+// Sidebar Typography Overrides
+body .layout-menu {
+    font-family: 'Inter', sans-serif !important;
+
+    // Menu Items
+    .menu-link {
+        font-weight: 600 !important; // Bolder
+
+        div {
+            font-family: 'Inter', sans-serif !important;
+            letter-spacing: 0.3px;
+        }
+    }
+
+    // Headers
+    .menu-header-text {
+        font-weight: 700 !important;
+        font-family: 'Inter', sans-serif !important;
+        opacity: 0.9 !important;
+    }
+}

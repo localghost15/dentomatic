@@ -1,0 +1,124 @@
+export const translations = {
+    ru: {
+        // Auth
+        welcome: 'Добро пожаловать! 👋',
+        subtitle: 'Пожалуйста, войдите в систему.',
+        email_label: 'Email',
+        password_label: 'Пароль',
+        remember_me: 'Запомнить меня',
+        login_btn: 'Войти',
+        loading: 'Вход...',
+
+        // Menu & Sidebar
+        menu: 'Меню',
+        home: 'Главная',
+        clinic: 'Клиника',
+        patients: 'Пациенты',
+        admin: 'Админ',
+        warehouse: 'Склад',
+        finance: 'Финансы',
+        settings: 'Настройки',
+
+        // Dashboard
+        add_event: 'Добавить запись',
+        add_doctor: 'Добавить врача',
+        edit_doctor: 'Редактировать врача',
+        full_name: 'ФИО',
+        specialization: 'Специализация',
+        status: 'Статус',
+        status_active: 'Активен',
+        status_vacation: 'В отпуске',
+        telegram_id: 'Telegram ID',
+        photo: 'Фото',
+        color: 'Цвет',
+        doctors_title: 'Список врачей',
+        doctors: 'Врачи',
+        view_all: 'Показать всех',
+
+        // Booking Modal
+        modal_title: 'Запись',
+        fullname: 'ФИО',
+        phone: 'Телефон',
+        doctor: 'Врач',
+        select_doctor: 'Выберите врача',
+        datetime: 'Дата и Время',
+        source: 'Источник',
+        recommendation: 'Рекомендация',
+        other: 'Другое',
+        lang_pref: 'Язык общения',
+        save: 'Сохранить',
+        cancel: 'Отмена',
+        delete: 'Удалить',
+        confirm_delete_text_short: 'Удалить?',
+        yes_delete: 'Да, удалить',
+        saved_success: 'Запись успешно сохранена',
+        deleted_success: 'Запись успешно удалена',
+        error_title: 'Ошибка',
+        // Settings
+        telegram_settings: 'Настройки Telegram',
+        telegram_bot_token: 'Токен бота',
+        telegram_bot_username: 'Имя пользователя бота',
+        settings_saved: 'Настройки сохранены',
+
+        doctor_saved: 'Врач успешно сохранен',
+        doctor_deleted: 'Врач удален'
+    },
+    uz: {
+        // ... (lines up to 57 match context)
+        // Menu & Sidebar
+        menu: 'Menyu',
+        home: 'Bosh sahifa',
+        clinic: 'Klinika',
+        patients: 'Bemorlar',
+        admin: 'Admin',
+        warehouse: 'Ombor',
+        finance: 'Moliya',
+        settings: 'Sozlamalar',
+
+        // Dashboard
+        add_event: 'Yangi yozuv',
+        add_doctor: 'Shifokor qo\'shish',
+        edit_doctor: 'Tahrirlash',
+        full_name: 'F.I.SH',
+        specialization: 'Mutaxassislik',
+        status: 'Holat',
+        status_active: 'Faol',
+        status_vacation: 'Ta\'tilda',
+        telegram_id: 'Telegram ID',
+        photo: 'Rasm',
+        color: 'Rang',
+        doctors_title: 'Shifokorlar ro\'yxati',
+        doctors: 'Shifokorlar',
+        view_all: 'Barchasini ko\'rish',
+
+        // Booking Modal
+        modal_title: 'Qabul',
+        fullname: 'F.I.SH',
+        phone: 'Telefon',
+        doctor: 'Shifokor',
+        select_doctor: 'Shifokorni tanlang',
+        datetime: 'Sana va Vaqt',
+        source: 'Manba',
+        recommendation: 'Tavsiya',
+        other: 'Boshqa',
+        lang_pref: 'Muloqot tili',
+        save: 'Saqlash',
+        cancel: 'Bekor qilish',
+        delete: 'O\'chirish',
+        confirm_delete_text_short: 'O\'chirilsinmi?',
+        yes_delete: 'Ha, o\'chirish',
+        saved_success: 'Yozuv muvaffaqiyatli saqlandi',
+        deleted_success: 'Yozuv muvaffaqiyatli o\'chirildi',
+        error_title: 'Xato',
+        success_title: 'Muvaffaqiyat',
+
+        // Settings
+        telegram_settings: 'Telegram sozlamalari',
+        telegram_bot_token: 'Bot tokeni',
+        telegram_bot_username: 'Bot foydalanuvchi nomi',
+        settings_saved: 'Sozlamalar saqlandi',
+
+        doctor_saved: 'Shifokor muvaffaqiyatli saqlandi',
+        doctor_deleted: 'Shifokor o\'chirildi'
+    }
+};
