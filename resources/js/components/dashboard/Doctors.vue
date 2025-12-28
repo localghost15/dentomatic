@@ -1,58 +1,110 @@
 <template>
   <div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
       <h4 class="fw-bold py-3 mb-0">{{ t.doctors_title }}</h4>
-      <button class="btn btn-primary" @click="openModal()">
-        <i class="ri-add-line me-1"></i> {{ t.add_doctor }}
-      </button>
+      
+      <div class="d-flex gap-2">
+          <div class="input-group">
+            <span class="input-group-text"><i class="ri-search-line"></i></span>
+            <input type="text" class="form-control" :placeholder="t.search_doctor" v-model="searchQuery">
+          </div>
+          <button class="btn btn-primary text-nowrap" @click="openModal()">
+            <i class="ri-add-line me-1"></i> {{ t.add_doctor }}
+          </button>
+      </div>
     </div>
 
     <!-- Doctors Grid -->
-    <div v-if="doctors.length > 0" class="row g-4">
-      <div v-for="doctor in doctors" :key="doctor.id" class="col-xl-3 col-lg-4 col-md-6">
-        <div class="card h-100">
+    <div v-if="paginatedDoctors.length > 0" class="row g-4 mb-4">
+      <div v-for="doctor in paginatedDoctors" :key="doctor.id" class="col-xl-3 col-lg-4 col-md-6">
+        <div class="card h-100 shadow-sm border-0">
            <!-- Card Content -->
-          <div class="card-body text-center">
-            <div class="mx-auto mb-3">
-              <img 
-                :src="doctor.photo_path ? '/storage/' + doctor.photo_path : '/assets/img/avatars/1.png'" 
-                alt="Avatar"
-                class="rounded-circle object-fit-cover"
-                style="width: 100px; height: 100px;"
-              />
-            </div>
-            <h5 class="card-title mb-1">{{ doctor.full_name }}</h5>
-            <p class="text-muted mb-2">{{ doctor.specialization }}</p>
-            
-            <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                <span :class="['badge', doctor.status === 'active' ? 'bg-label-success' : 'bg-label-warning']">
-                    {{ doctor.status === 'active' ? t.status_active : t.status_vacation }}
-                </span>
-                 <span class="badge rounded-pill" :style="{ backgroundColor: doctor.calendar_color, width: '20px', height: '20px' }"></span>
+          <div class="card-body">
+            <div class="bg-label-primary text-center mb-4 pt-4 pb-3 rounded-3 position-relative">
+              <div class="mx-auto mb-2">
+                  <img 
+                    :src="doctor.photo_path ? '/storage/' + doctor.photo_path : '/assets/img/avatars/1.png'" 
+                    alt="Avatar"
+                    class="rounded-circle object-fit-cover shadow"
+                    style="width: 100px; height: 100px;"
+                  />
+              </div>
             </div>
             
-            <div class="text-muted small mb-3">
-                <i class="ri-phone-line me-1"></i> {{ doctor.phone || '-' }}
+            <h5 class="mb-1 text-center fw-bold text-dark">{{ doctor.full_name }}</h5>
+            <p class="mb-4 text-center text-muted">{{ doctor.specialization }}</p>
+            
+            <div class="row mb-4 g-3">
+                <div class="col-6">
+                   <div class="d-flex align-items-center">
+                       <div class="avatar flex-shrink-0 me-3">
+                           <span class="avatar-initial rounded-3 bg-label-info"><i class="ri-phone-line fs-4"></i></span>
+                       </div>
+                       <div class="overflow-hidden">
+                           <h6 class="mb-0 text-nowrap fw-semibold text-truncate">{{ doctor.phone || '-' }}</h6>
+                           <small class="text-muted">{{ t.phone }}</small>
+                       </div>
+                   </div>
+                </div>
+                <div class="col-6">
+                   <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3">
+                           <span class="avatar-initial rounded-3" :class="doctor.status === 'active' ? 'bg-label-success' : 'bg-label-warning'">
+                               <i :class="doctor.status === 'active' ? 'ri-check-line' : 'ri-time-line'" class="ri-history-line fs-4"></i>
+                           </span>
+                       </div>
+                       <div class="overflow-hidden">
+                           <h6 class="mb-0 text-nowrap fw-semibold text-truncate">
+                               {{ doctor.status === 'active' ? t.status_active : t.status_vacation }}
+                           </h6>
+                           <small class="text-muted">{{ t.status }}</small>
+                       </div>
+                   </div>
+                </div>
             </div>
-          </div>
-          <div class="card-footer d-flex justify-content-center gap-2 bg-light-subtle">
-            <button class="btn btn-sm btn-outline-primary" @click="openModal(doctor)">
-                <i class="ri-edit-line"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" @click="confirmDelete(doctor)">
-                <i class="ri-delete-bin-line"></i>
-            </button>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary w-100 waves-effect waves-light fw-medium" @click="openModal(doctor)">
+                    <i class="ri-edit-line me-1"></i> {{ t.edit_doctor }}
+                </button>
+                <button class="btn btn-label-danger" @click="confirmDelete(doctor)">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
     
+    <!-- Pagination -->
+    <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
+        <nav aria-label="Doctors pagination">
+            <ul class="pagination">
+                <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                    <button class="page-link" @click="currentPage--">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </button>
+                </li>
+                <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: currentPage === page }">
+                    <button class="page-link" @click="currentPage = page">{{ page }}</button>
+                </li>
+                <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                    <button class="page-link" @click="currentPage++">
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
     <!-- Empty State -->
     <div v-else class="text-center py-5">
         <i class="ri-stethoscope-line text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
         <h5 class="mt-3 text-muted">{{ t.doctors_empty_title }}</h5>
         <p class="text-muted mb-2">{{ t.doctors_empty_text }}</p>
     </div>
+
+
 
     <!-- Modal -->
     <div v-if="showModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.5);" tabindex="-1">
@@ -128,7 +180,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useToastStore } from '@/stores/useToastStore';
@@ -139,6 +191,35 @@ const toastStore = useToastStore();
 const t = computed(() => translations[configStore.language] || translations.ru);
 
 const doctors = ref([]);
+const searchQuery = ref('');
+
+// Pagination State
+const currentPage = ref(1);
+const itemsPerPage = 32; // 4 columns * 8 rows
+
+const filteredDoctorsList = computed(() => {
+    if (!searchQuery.value) return doctors.value;
+    const query = searchQuery.value.toLowerCase();
+    return doctors.value.filter(doc => 
+        doc.full_name.toLowerCase().includes(query) ||
+        (doc.specialization && doc.specialization.toLowerCase().includes(query)) ||
+        (doc.phone && doc.phone.includes(query))
+    );
+});
+
+const totalPages = computed(() => Math.ceil(filteredDoctorsList.value.length / itemsPerPage));
+
+const paginatedDoctors = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredDoctorsList.value.slice(start, end);
+});
+
+// Reset page on search
+watch(searchQuery, () => {
+    currentPage.value = 1;
+});
+
 const showModal = ref(false);
 const showDeleteModal = ref(false);
 const isEditing = ref(false);

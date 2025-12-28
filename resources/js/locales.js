@@ -19,6 +19,19 @@ export const translations = {
         finance: 'Финансы',
         settings: 'Настройки',
 
+        // Navbar
+        logout: 'Выйти',
+        user_role: 'Администратор',
+        search_placeholder: 'Поиск...',
+        search_doctor: 'Поиск врача...',
+
+        // Calendar
+        today: 'Сегодня',
+        month: 'Месяц',
+        week: 'Неделя',
+        day: 'День',
+        list: 'Список',
+
         // Dashboard
         add_event: 'Добавить запись',
         add_doctor: 'Добавить врача',
@@ -63,10 +76,30 @@ export const translations = {
         settings_saved: 'Настройки сохранены',
 
         doctor_saved: 'Врач успешно сохранен',
-        doctor_deleted: 'Врач удален'
+        doctor_deleted: 'Врач удален',
+
+        // Settings placeholders
+        telegram_token_placeholder: '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11',
+        telegram_username_placeholder: 'dentomatic_bot',
+
+        // Login placeholders
+        email_placeholder: 'admin@dentomatic.com',
+        password_placeholder: '············',
+
+        // Doctor Delete
+        delete_doctor: 'Удалить врача',
+        delete_doctor_confirm: 'Вы уверены, что хотите удалить этого врача?'
     },
     uz: {
-        // ... (lines up to 57 match context)
+        // Auth
+        welcome: 'Xush kelibsiz! 👋',
+        subtitle: 'Iltimos, tizimga kiring.',
+        email_label: 'Email',
+        password_label: 'Parol',
+        remember_me: 'Eslab qolish',
+        login_btn: 'Kirish',
+        loading: 'Kirish...',
+
         // Menu & Sidebar
         menu: 'Menyu',
         home: 'Bosh sahifa',
@@ -76,6 +109,19 @@ export const translations = {
         warehouse: 'Ombor',
         finance: 'Moliya',
         settings: 'Sozlamalar',
+
+        // Navbar
+        logout: 'Chiqish',
+        user_role: 'Administrator',
+        search_placeholder: 'Qidiruv...',
+        search_doctor: 'Shifokorni qidirish...',
+
+        // Calendar
+        today: 'Bugun',
+        month: 'Oy',
+        week: 'Hafta',
+        day: 'Kun',
+        list: 'Ro\'yxat',
 
         // Dashboard
         add_event: 'Yangi yozuv',
@@ -123,6 +169,18 @@ export const translations = {
         settings_saved: 'Sozlamalar saqlandi',
 
         doctor_saved: 'Shifokor muvaffaqiyatli saqlandi',
-        doctor_deleted: 'Shifokor o\'chirildi'
+        doctor_deleted: 'Shifokor o\'chirildi',
+
+        // Settings placeholders
+        telegram_token_placeholder: '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11',
+        telegram_username_placeholder: 'dentomatic_bot',
+
+        // Login placeholders
+        email_placeholder: 'admin@dentomatic.com',
+        password_placeholder: '············',
+
+        // Doctor Delete
+        delete_doctor: 'Shifokorni o\'chirish',
+        delete_doctor_confirm: 'Haqiqatan ham ushbu shifokorni o‘chirmoqchimisiz?'
     }
 };

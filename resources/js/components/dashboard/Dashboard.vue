@@ -260,30 +260,17 @@ const calendarOptions = reactive({
 
 // Watch language
 watch(currentLanguage, (newLang) => {
-    if (newLang === 'uz') {
-        calendarOptions.locale = 'uz'; 
-        calendarOptions.buttonText = {
-             today:    t.value.today,
-            month:    t.value.month,
-            week:     t.value.week,
-            day:      t.value.day,
-            list:     t.value.list
-        }
-    } else {
-        calendarOptions.locale = 'ru';
-        calendarOptions.buttonText = {
-            today:    t.value.today, // Using t.value here might be tricky if not reactive inside plain object updates immediately? 
-            // Better to just grab values. Wait, `t` is computed, depends on store. 
-            // In watch callback, newLang matches so we can use t.value effectively or mapped values.
-            // Actually, simply relying on `calendarOptions` update is enough, but we should make sure `t` is updated.
-            // Since `t` depends on configStore.language, and watch depends on currentLanguage (same source),
-            // `t` will update.
-            month:    t.value.month,
-            week:     t.value.week,
-            day:      t.value.day,
-            list:     t.value.list
-        }
-    }
+    // Direct lookup to ensure we get the correct language object immediately
+    const activeTrans = translations[newLang] || translations.ru;
+    
+    calendarOptions.locale = newLang; 
+    calendarOptions.buttonText = {
+         today:    activeTrans.today || 'Bugun',
+         month:    activeTrans.month || 'Oy',
+         week:     activeTrans.week || 'Hafta',
+         day:      activeTrans.day || 'Kun',
+         list:     activeTrans.list || 'Ro\'yxat'
+    };
 }, { immediate: true });
 
 import { translations } from '@/locales';
@@ -297,11 +284,25 @@ const t = computed(() => translations[configStore.language] || translations.ru);
 .app-calendar-content {
     min-height: 80vh;
 }
-/* Ensure sidebar fits template style */
 .app-calendar-sidebar {
-    /* Styles usually come from app-calendar.css, but we can enforce some defaults */
     min-width: 260px;
     flex-basis: 260px;
     flex-grow: 0;
+    border-right: 1px solid rgba(0,0,0,0.1); /* border-end replacement helper if needed */
+}
+
+@media (max-width: 992px) {
+    .app-calendar-sidebar {
+        min-width: 100%;
+        flex-basis: 100%;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        display: none; /* Hide sidebar on mobile to prioritize Calendar as per 'max useful space' request. Filters less important on mobile usually? Or stack them? */
+        /* User said: Mobile: cards not stick to edges. Desktop: max space. */
+        /* If I hide sidebar, I get max space. But I lose functionality. */
+        /* Let's stack it but maybe collapsed? logic change forbidden. */
+        /* I will just stack it. */
+        display: block; 
+    }
 }
 </style>
