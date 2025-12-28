@@ -74,9 +74,9 @@
         <!-- Source -->
         <div class="form-floating form-floating-outline mb-4">
           <select id="basicSource" class="form-select" v-model="form.source">
-            <option value="instagram">Instagram</option>
-            <option value="telegram">Telegram</option>
-             <option value="google">Google</option>
+            <option value="instagram">{{ t.instagram }}</option>
+            <option value="telegram">{{ t.telegram }}</option>
+             <option value="google">{{ t.google }}</option>
             <option value="recommendation">{{ t.recommendation }}</option>
              <option value="other">{{ t.other }}</option>
           </select>
@@ -97,7 +97,7 @@
             <!-- Delete Button (Left side) -->
             <div>
                 <button v-if="form.id && !showDeleteConfirm" type="button" class="btn btn-danger" @click="initiateDelete">
-                    <i class="ri-delete-bin-line me-1"></i> {{ t.delete || 'Удалить' }}
+                    <i class="ri-delete-bin-line me-1"></i> {{ t.delete }}
                 </button>
                  <!-- Delete Confirmation View (Inline) -->
                  <div v-if="showDeleteConfirm" class="d-flex align-items-center gap-2">

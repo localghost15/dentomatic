@@ -33,7 +33,7 @@
                   id="email"
                   name="email-username"
                   v-model="form.email"
-                  placeholder="admin@dentomatic.com"
+                  :placeholder="t.email_placeholder"
                   autofocus />
                 <label for="email">{{ t.email_label }}</label>
               </div>
@@ -47,7 +47,7 @@
                         class="form-control"
                         name="password"
                         v-model="form.password"
-                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                        :placeholder="t.password_placeholder"
                         aria-describedby="password" />
                       <label for="password">{{ t.password_label }}</label>
                     </div>

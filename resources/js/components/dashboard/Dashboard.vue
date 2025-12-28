@@ -260,23 +260,28 @@ const calendarOptions = reactive({
 
 // Watch language
 watch(currentLanguage, (newLang) => {
-     if (newLang === 'uz') {
+    if (newLang === 'uz') {
         calendarOptions.locale = 'uz'; 
         calendarOptions.buttonText = {
-             today:    'Bugun',
-            month:    'Oy',
-            week:     'Hafta',
-            day:      'Kun',
-            list:     'Ro\'yxat'
+             today:    t.value.today,
+            month:    t.value.month,
+            week:     t.value.week,
+            day:      t.value.day,
+            list:     t.value.list
         }
     } else {
         calendarOptions.locale = 'ru';
         calendarOptions.buttonText = {
-            today:    'Сегодня',
-            month:    'Месяц',
-            week:     'Неделя',
-            day:      'День',
-            list:     'Список'
+            today:    t.value.today, // Using t.value here might be tricky if not reactive inside plain object updates immediately? 
+            // Better to just grab values. Wait, `t` is computed, depends on store. 
+            // In watch callback, newLang matches so we can use t.value effectively or mapped values.
+            // Actually, simply relying on `calendarOptions` update is enough, but we should make sure `t` is updated.
+            // Since `t` depends on configStore.language, and watch depends on currentLanguage (same source),
+            // `t` will update.
+            month:    t.value.month,
+            week:     t.value.week,
+            day:      t.value.day,
+            list:     t.value.list
         }
     }
 }, { immediate: true });

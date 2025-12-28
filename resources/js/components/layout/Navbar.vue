@@ -16,8 +16,8 @@
           <input
             type="text"
             class="form-control border-0 shadow-none bg-body"
-            placeholder="Search..."
-            aria-label="Search..." />
+            :placeholder="t.search_placeholder"
+            :aria-label="t.search_placeholder" />
         </div>
       </div>
       <!-- /Search -->
@@ -70,7 +70,7 @@
                   </div>
                   <div class="flex-grow-1">
                     <span class="fw-semibold d-block">{{ user?.name || 'User' }}</span>
-                    <small class="text-muted">Admin</small>
+                    <small class="text-muted">{{ t.user_role }}</small>
                   </div>
                 </div>
               </a>
@@ -81,7 +81,7 @@
             <li>
               <a class="dropdown-item" href="javascript:void(0);" @click="handleLogout">
                 <i class="mdi mdi-logout me-2"></i>
-                <span class="align-middle">Log Out</span>
+                <span class="align-middle">{{ t.logout }}</span>
               </a>
             </li>
           </ul>
@@ -97,11 +97,13 @@ import { computed } from 'vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useRouter } from 'vue-router';
+import { translations } from '@/locales';
 
 const authStore = useAuthStore();
 const configStore = useConfigStore();
 const router = useRouter();
 
+const t = computed(() => translations[configStore.language] || translations.ru);
 const user = computed(() => authStore.user);
 const currentLanguage = computed(() => configStore.language);
 
