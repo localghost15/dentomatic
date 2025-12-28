@@ -50,8 +50,8 @@
     <!-- Empty State -->
     <div v-else class="text-center py-5">
         <i class="ri-stethoscope-line text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
-        <h5 class="mt-3 text-muted">Список врачей пуст</h5>
-        <p class="text-muted mb-2">Нажмите "Добавить врача", чтобы создать первую запись.</p>
+        <h5 class="mt-3 text-muted">{{ t.doctors_empty_title }}</h5>
+        <p class="text-muted mb-2">{{ t.doctors_empty_text }}</p>
     </div>
 
     <!-- Modal -->
@@ -233,9 +233,10 @@ const saveDoctor = async () => {
         fetchDoctors();
     } catch (error) {
         console.error(error);
+        const errorMsg = error.response?.data?.message || 'Failed to save doctor';
          toastStore.add({
             title: 'Error',
-            message: 'Failed to save doctor',
+            message: errorMsg,
             type: 'error'
         });
     }

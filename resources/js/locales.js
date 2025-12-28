@@ -32,6 +32,8 @@ export const translations = {
         photo: 'Фото',
         color: 'Цвет',
         doctors_title: 'Список врачей',
+        doctors_empty_title: 'Список врачей пуст',
+        doctors_empty_text: 'Нажмите "Добавить врача", чтобы создать первую запись.',
         doctors: 'Врачи',
         view_all: 'Показать всех',
 
@@ -88,6 +90,8 @@ export const translations = {
         photo: 'Rasm',
         color: 'Rang',
         doctors_title: 'Shifokorlar ro\'yxati',
+        doctors_empty_title: 'Shifokorlar ro\'yxati bo\'sh',
+        doctors_empty_text: 'Birinchi yozuvni yaratish uchun "Shifokor qo\'shish" tugmasini bosing.',
         doctors: 'Shifokorlar',
         view_all: 'Barchasini ko\'rish',
 

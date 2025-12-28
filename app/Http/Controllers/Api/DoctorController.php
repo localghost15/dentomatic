@@ -31,7 +31,7 @@ class DoctorController extends Controller
             // Create User linked to Doctor
             $user = User::create([
                 'name' => $request->full_name,
-                'email' => Str::slug($request->full_name) . rand(100, 999) . '@dentomatic.com', // Generated email
+                'email' => 'doctor_' . uniqid() . '@dentomatic.com', // Safer email generation
                 'password' => Hash::make('password'), // Default password
             ]);
             
