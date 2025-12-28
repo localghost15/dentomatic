@@ -23,8 +23,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('doctors', DoctorController::class);
     // POST for update to handle FormData easily if needed (Laravel sometimes has issues with PUT + FormData)
     Route::post('doctors/{doctor}', [DoctorController::class, 'update']);
+    Route::post('doctors/{doctor}/generate-tg-code', [DoctorController::class, 'generateTgCode']);
 
     // Settings
     Route::get('settings', [SettingController::class, 'index']);
     Route::post('settings', [SettingController::class, 'update']);
 });
+
+// Telegram Webhook (Public)
+Route::post('telegram/webhook', [\App\Http\Controllers\Api\TelegramWebhookController::class, 'handle']);

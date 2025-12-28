@@ -17,7 +17,9 @@ class Doctor extends Model
         'calendar_color',
         'photo_path',
         'status',
-        'telegram_id'
+        'telegram_id',
+        'telegram_chat_id',
+        'tg_auth_code'
     ];
 
     public function user()

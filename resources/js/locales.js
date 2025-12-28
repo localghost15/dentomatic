@@ -35,7 +35,7 @@ export const translations = {
         // Dashboard
         add_event: 'Добавить запись',
         add_doctor: 'Добавить врача',
-        edit_doctor: 'Редактировать врача',
+        edit_doctor: 'Редактировать',
         full_name: 'ФИО',
         specialization: 'Специализация',
         status: 'Статус',
@@ -88,7 +88,15 @@ export const translations = {
 
         // Doctor Delete
         delete_doctor: 'Удалить врача',
-        delete_doctor_confirm: 'Вы уверены, что хотите удалить этого врача?'
+        delete_doctor_confirm: 'Вы уверены, что хотите удалить этого врача?',
+        not_specified: 'Не указан',
+
+        // Telegram
+        bind_telegram: 'Привязать Telegram',
+        tg_instruction: 'Отправьте этот код боту',
+        tg_code_label: 'Код привязки',
+        tg_connected: 'Подключено',
+        tg_not_connected: 'Не подключено'
     },
     uz: {
         // Auth
@@ -181,6 +189,14 @@ export const translations = {
 
         // Doctor Delete
         delete_doctor: 'Shifokorni o\'chirish',
-        delete_doctor_confirm: 'Haqiqatan ham ushbu shifokorni o‘chirmoqchimisiz?'
+        delete_doctor_confirm: 'Haqiqatan ham ushbu shifokorni o‘chirmoqchimisiz?',
+        not_specified: 'Ko\'rsatilmagan',
+
+        // Telegram
+        bind_telegram: 'Telegram-ni ulash',
+        tg_instruction: 'Ushbu kodni botga yuboring',
+        tg_code_label: 'Ulash kodi',
+        tg_connected: 'Ulangan',
+        tg_not_connected: 'Ulanmagan'
     }
 };

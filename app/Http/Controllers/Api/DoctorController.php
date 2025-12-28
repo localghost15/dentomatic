@@ -93,4 +93,12 @@ class DoctorController extends Controller
         // Optionally delete user? Let's keep user for history or soft delete.
         return response()->noContent();
     }
+
+    public function generateTgCode(Request $request, Doctor $doctor)
+    {
+        $code = rand(100000, 999999);
+        $doctor->update(['tg_auth_code' => $code]);
+
+        return response()->json(['code' => $code]);
+    }
 }

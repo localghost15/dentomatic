@@ -41,7 +41,7 @@
                            <span class="avatar-initial rounded-3 bg-label-info"><i class="ri-phone-line fs-4"></i></span>
                        </div>
                        <div class="overflow-hidden">
-                           <h6 class="mb-0 text-nowrap fw-semibold text-truncate">{{ doctor.phone || '-' }}</h6>
+                           <h6 class="mb-0 text-nowrap fw-semibold text-truncate">{{ doctor.phone || t.not_specified }}</h6>
                            <small class="text-muted">{{ t.phone }}</small>
                        </div>
                    </div>
@@ -61,6 +61,12 @@
                        </div>
                    </div>
                 </div>
+                <div class="col-12">
+                    <div class="d-flex align-items-center bg-label-primary rounded-3 p-2">
+                        <i :class="doctor.telegram_chat_id ? 'text-primary' : 'text-secondary'" class="ri-telegram-fill me-2 fs-4"></i>
+                        <span class="fw-medium text-truncate" :class="doctor.telegram_chat_id ? 'text-primary' : 'text-secondary'">{{ doctor.telegram_id || t.not_specified }}</span>
+                    </div>
+                </div>
             </div>
 
             <div class="d-flex gap-2">
@@ -76,6 +82,13 @@
       </div>
     </div>
     
+    <!-- Empty State -->
+    <div v-else class="text-center py-5">
+        <i class="ri-stethoscope-line text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
+        <h5 class="mt-3 text-muted">{{ t.doctors_empty_title }}</h5>
+        <p class="text-muted mb-2">{{ t.doctors_empty_text }}</p>
+    </div>
+
     <!-- Pagination -->
     <div v-if="totalPages > 1" class="d-flex justify-content-center mt-4">
         <nav aria-label="Doctors pagination">
@@ -95,13 +108,6 @@
                 </li>
             </ul>
         </nav>
-    </div>
-
-    <!-- Empty State -->
-    <div v-else class="text-center py-5">
-        <i class="ri-stethoscope-line text-muted" style="font-size: 4rem; opacity: 0.5;"></i>
-        <h5 class="mt-3 text-muted">{{ t.doctors_empty_title }}</h5>
-        <p class="text-muted mb-2">{{ t.doctors_empty_text }}</p>
     </div>
 
 
@@ -145,6 +151,25 @@
                     <label class="form-label">{{ t.telegram_id }} (Optional)</label>
                     <input type="text" class="form-control" v-model="form.telegram_id">
                 </div>
+                
+                <!-- Telegram Binding Section -->
+                <div v-if="isEditing" class="mb-3 p-3 bg-lighter rounded">
+                    <div v-if="form.telegram_chat_id" class="d-flex align-items-center text-success">
+                         <i class="ri-checkbox-circle-fill me-2 fs-5"></i>
+                         <span>{{ t.tg_connected }}</span>
+                    </div>
+                    <div v-else>
+                        <div v-if="generatedCode" class="text-center">
+                            <h6 class="text-muted mb-2">{{ t.tg_instruction }}</h6>
+                            <div class="display-6 fw-bold text-primary mb-2">{{ generatedCode }}</div>
+                            <small class="text-muted d-block mb-3">@{{ configStore.botUsername || 'dentomatic_bot' }}</small>
+                        </div>
+                        <button v-else type="button" class="btn btn-info w-100" @click="generateCode">
+                            <i class="ri-telegram-line me-1"></i> {{ t.bind_telegram }}
+                        </button>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label">{{ t.photo }}</label>
                     <input type="file" class="form-control" @change="handleFileUpload">
@@ -225,6 +250,7 @@ const showDeleteModal = ref(false);
 const isEditing = ref(false);
 const currentDoctorId = ref(null);
 const doctorToDelete = ref(null);
+const generatedCode = ref(null);
 
 const form = reactive({
     full_name: '',
@@ -233,6 +259,8 @@ const form = reactive({
     calendar_color: '#3788d8',
     status: 'active',
     telegram_id: '',
+    telegram_chat_id: null,
+    tg_auth_code: null,
     photo: null
 });
 
@@ -247,6 +275,7 @@ const fetchDoctors = async () => {
 
 const openModal = (doctor = null) => {
     isEditing.value = !!doctor;
+    generatedCode.value = null; // Reset code
     if (doctor) {
         currentDoctorId.value = doctor.id;
         form.full_name = doctor.full_name;
@@ -255,7 +284,14 @@ const openModal = (doctor = null) => {
         form.calendar_color = doctor.calendar_color;
         form.status = doctor.status;
         form.telegram_id = doctor.telegram_id;
+        form.telegram_chat_id = doctor.telegram_chat_id;
+        form.tg_auth_code = doctor.tg_auth_code;
         form.photo = null; // Don't preload file input
+        
+        if (doctor.tg_auth_code) {
+             generatedCode.value = doctor.tg_auth_code;
+        }
+
     } else {
         resetForm();
     }
@@ -269,17 +305,32 @@ const closeModal = () => {
 
 const resetForm = () => {
     currentDoctorId.value = null;
+    generatedCode.value = null;
     form.full_name = '';
     form.specialization = '';
     form.phone = '';
     form.calendar_color = '#3788d8';
     form.status = 'active';
     form.telegram_id = '';
+    form.telegram_chat_id = null;
+    form.tg_auth_code = null;
     form.photo = null;
 };
 
 const handleFileUpload = (event) => {
     form.photo = event.target.files[0];
+};
+
+const generateCode = async () => {
+    try {
+        const response = await axios.post(`/api/doctors/${currentDoctorId.value}/generate-tg-code`);
+        generatedCode.value = response.data.code;
+        form.tg_auth_code = response.data.code;
+        toastStore.add(t.value.tg_code_label + ' ' + response.data.code, 'success');
+    } catch (error) {
+        console.error(error);
+         toastStore.add('Failed to generate code', 'error');
+    }
 };
 
 const saveDoctor = async () => {
@@ -305,21 +356,13 @@ const saveDoctor = async () => {
             });
         }
 
-        toastStore.add({
-            title: 'Success',
-            message: t.value.doctor_saved,
-            type: 'success'
-        });
+        toastStore.add(t.value.doctor_saved, 'success');
         closeModal();
         fetchDoctors();
     } catch (error) {
         console.error(error);
         const errorMsg = error.response?.data?.message || 'Failed to save doctor';
-         toastStore.add({
-            title: 'Error',
-            message: errorMsg,
-            type: 'error'
-        });
+         toastStore.add(errorMsg, 'error');
     }
 };
 
@@ -332,19 +375,11 @@ const deleteDoctor = async () => {
     if (!doctorToDelete.value) return;
     try {
         await axios.delete(`/api/doctors/${doctorToDelete.value.id}`);
-        toastStore.add({
-            title: 'Deleted',
-            message: t.value.doctor_deleted,
-            type: 'success'
-        });
+        toastStore.add(t.value.doctor_deleted, 'success');
         showDeleteModal.value = false;
         fetchDoctors();
     } catch (error) {
-         toastStore.add({
-            title: 'Error',
-            message: 'Failed to delete doctor',
-            type: 'error'
-        });
+         toastStore.add('Failed to delete doctor', 'error');
     }
 };
 

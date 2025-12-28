@@ -96,14 +96,14 @@
         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
             <!-- Delete Button (Left side) -->
             <div>
-                <button v-if="form.id && !showDeleteConfirm" type="button" class="btn btn-danger" @click="initiateDelete">
-                    <i class="ri-delete-bin-line me-1"></i> {{ t.delete }}
+                <button v-if="form.id && !showDeleteConfirm" type="button" class="btn btn-outline-danger btn-icon" @click="initiateDelete" title="Delete">
+                    <i class="ri-delete-bin-line"></i>
                 </button>
                  <!-- Delete Confirmation View (Inline) -->
                  <div v-if="showDeleteConfirm" class="d-flex align-items-center gap-2">
-                    <span class="text-danger fw-medium me-2">{{ t.confirm_delete_text_short }}</span>
-                    <button type="button" class="btn btn-danger btn-sm" @click="confirmDelete">{{ t.yes_delete }}</button>
-                    <button type="button" class="btn btn-secondary btn-sm" @click="cancelDelete">{{ t.cancel }}</button>
+                    <span class="text-danger fw-medium me-2 small">{{ t.confirm_delete_text_short }}</span>
+                    <button type="button" class="btn btn-danger btn-sm p-1 px-2" @click="confirmDelete"><i class="ri-check-line"></i></button>
+                    <button type="button" class="btn btn-secondary btn-sm p-1 px-2" @click="cancelDelete"><i class="ri-close-line"></i></button>
                  </div>
             </div>
 
