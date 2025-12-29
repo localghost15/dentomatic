@@ -22,4 +22,9 @@ class Booking extends Model
     protected $casts = [
         'datetime' => 'datetime',
     ];
+
+    public function doctorInfo()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor');
+    }
 }

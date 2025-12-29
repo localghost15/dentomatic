@@ -96,7 +96,16 @@ export const translations = {
         tg_instruction: 'Отправьте этот код боту',
         tg_code_label: 'Код привязки',
         tg_connected: 'Подключено',
-        tg_not_connected: 'Не подключено'
+        tg_not_connected: 'Не подключено',
+
+        // Conflicts
+        conflict_title: 'Внимание: Пересечение',
+        conflict_text: 'У врача {name} уже есть запись на {time}. Вы уверены, что хотите добавить еще одну?',
+        add_anyway: 'Всё равно добавить',
+
+        // Archived
+        archived_doctor: 'Врач удален (Архив)',
+        archived_label: '[Архив]'
     },
     uz: {
         // Auth
@@ -197,6 +206,15 @@ export const translations = {
         tg_instruction: 'Ushbu kodni botga yuboring',
         tg_code_label: 'Ulash kodi',
         tg_connected: 'Ulangan',
-        tg_not_connected: 'Ulanmagan'
+        tg_not_connected: 'Ulanmagan',
+
+        // Conflicts
+        conflict_title: 'Diqqat: Vaqt kesishishi',
+        conflict_text: 'Shifokor {name}da {time} da allaqachon qabul bor. Shunga qaramay qo\'shasizmi?',
+        add_anyway: 'Baribir qo\'shish',
+
+        // Archived
+        archived_doctor: 'Shifokor arxivda',
+        archived_label: '[Arxiv]'
     }
 };

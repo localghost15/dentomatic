@@ -75,6 +75,15 @@
         <!-- /Login -->
       </div>
     </div>
+
+    
+    <!-- Background Mask -->
+    <img 
+        :src="'/assets/img/illustrations/auth-basic-login-mask-light.png'" 
+        class="authentication-image d-none d-lg-block" 
+        alt="triangle-bg"
+        style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 0; pointer-events: none;"
+    />
   </div>
 </template>
 

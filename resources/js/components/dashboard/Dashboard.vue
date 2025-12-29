@@ -92,6 +92,9 @@ const fetchDoctors = async () => {
         }));
         // Select all by default
         selectedDoctors.value = doctorsList.value.map(d => d.value);
+        
+        // Trigger refetch now that we have filters set
+        refetchEvents();
     } catch (error) {
         console.error('Failed to fetch doctors', error);
     }
@@ -158,7 +161,7 @@ const handleEventClick = (info) => {
         phone: props.phone,
         telegram: props.telegram,
         doctor: props.doctor,
-        datetime: event.startStr, 
+        datetime: props.datetime_raw || event.startStr, 
         source: props.source,
         lang_pref: props.lang_pref
     };
@@ -229,21 +232,34 @@ const calendarOptions = reactive({
                 // Let's assume user starts fresh or we handle loose matching.
                 
                 const doctorInList = doctorsList.value.find(d => d.value == docId);
-                let color = '#6c757d'; // Default gray
-                if (doctorInList) {
-                    color = doctorInList.color;
+                const isArchived = event.extendedProps.is_archived;
+                
+                let backgroundColor = '#ffffff';
+                let borderColor = '#d1dbe5';
+                let textColor = '#697a8d'; // Muted text
+
+                if (doctorInList && !isArchived) {
+                    backgroundColor = doctorInList.color;
+                    borderColor = doctorInList.color;
+                    textColor = '#ffffff'; // White text on colored bg
                 }
 
                 return {
                     ...event,
-                    backgroundColor: color,
-                    borderColor: color
+                    allDay: false, 
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    textColor: textColor
                 };
           }).filter(event => {
                const docId = event.extendedProps.doctor;
                // If filtering is active
                if (selectedDoctors.value.length === 0) return false;
                if (!docId) return true; // Show unassigned
+               
+               // Always show archived events, or check filter
+               if (event.extendedProps.is_archived) return true;
+               
                return selectedDoctors.value.includes(Number(docId)) || selectedDoctors.value.includes(String(docId));
           });
           successCallback(events);
@@ -255,7 +271,44 @@ const calendarOptions = reactive({
   },
   
   dateClick: handleDateClick,
-  eventClick: handleEventClick
+  eventClick: handleEventClick,
+  
+  // Format time as 24h (e.g. 09:00) globally
+  eventTimeFormat: {
+    hour: '2-digit',
+    minute: '2-digit',
+    meridiem: false,
+    hour12: false
+  },
+
+  views: {
+    dayGridMonth: {
+        // Custom render for Month view to be "neat"
+        eventContent: function(arg) {
+            const timeText = arg.timeText;
+            const title = arg.event.title;
+            const isArchived = arg.event.extendedProps.is_archived;
+            
+            let classes = "fc-event-main-frame d-flex align-items-center overflow-hidden";
+            let archiveLabel = "";
+            let style = "";
+            
+            if (isArchived) {
+                style = "opacity: 0.6; filter: grayscale(1);";
+                archiveLabel = `<span class="badge bg-secondary ms-1" style="font-size: 0.65em;">[Arxiv]</span>`;
+            }
+
+            // Create a neat structure: Bold Time | Name | [Archived]
+            // Using bootstrap classes for styling
+            return {
+                html: `<div class="${classes}" style="${style}">
+                          <div class="fc-event-time fw-bold me-1" style="min-width: 40px;">${timeText}</div>
+                          <div class="fc-event-title text-truncate">${title} ${archiveLabel}</div>
+                       </div>`
+            };
+        }
+    }
+  }
 });
 
 // Watch language

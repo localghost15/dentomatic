@@ -53,7 +53,7 @@
         <div class="form-floating form-floating-outline mb-4">
           <select id="basicDoctor" class="form-select" v-model="form.doctor" required>
             <option value="" disabled>{{ t.select_doctor }}</option>
-            <option v-for="doc in doctors" :key="doc.value" :value="doc.value">
+            <option v-for="doc in computedDoctors" :key="doc.value" :value="doc.value">
                 {{ doc.label }}
             </option>
           </select>
@@ -114,6 +114,20 @@
             </div>
         </div>
       </form>
+      
+       <!-- Conflict Warning Overlay -->
+        <div v-if="showConflictModal" class="position-absolute top-0 start-0 w-100 h-100 bg-white d-flex flex-column justify-content-center align-items-center p-4 text-center" style="z-index: 1050; opacity: 0.98;">
+            <div class="mb-3">
+                 <i class="ri-alarm-warning-fill text-warning" style="font-size: 4rem;"></i>
+            </div>
+            <h4 class="fw-bold text-danger mb-3">{{ t.conflict_title }}</h4>
+            <p class="fs-5 mb-4 text-dark" v-html="conflictMessage"></p>
+            
+            <div class="d-flex gap-3">
+                 <button type="button" class="btn btn-outline-secondary btn-lg" @click="closeConflictModal">{{ t.cancel }}</button>
+                 <button type="button" class="btn btn-danger btn-lg shadow" @click="confirmForceSave">{{ t.add_anyway }}</button>
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -133,6 +147,8 @@ const bookingModalRef = ref(null);
 const emit = defineEmits(['booking-saved', 'booking-deleted']);
 
 const showDeleteConfirm = ref(false);
+const showConflictModal = ref(false);
+const conflictData = ref(null);
 
 const props = defineProps({
     initialData: {
@@ -143,6 +159,22 @@ const props = defineProps({
         type: Array,
         default: () => []
     }
+});
+
+// Computed doctors list to handle archived doctors
+const computedDoctors = computed(() => {
+    // Clone active list
+    const list = [...props.doctors];
+    
+    // If form has a doctor ID that is NOT in the list (archived), append it temporarily
+    if (form.doctor && !list.find(d => d.value == form.doctor)) {
+        list.push({
+            value: form.doctor,
+            label: t.value.archived_doctor + ' ' + t.value.archived_label,
+            disabled: true // Typically archived doctors shouldn't be re-selected if changed, but we just need to display it.
+        });
+    }
+    return list;
 });
 
 const form = reactive({
@@ -158,14 +190,28 @@ const form = reactive({
 
 const t = computed(() => translations[configStore.language] || translations.ru);
 
+const conflictMessage = computed(() => {
+    if (!conflictData.value) return '';
+    let msg = t.value.conflict_text;
+    msg = msg.replace('{name}', `<b>${conflictData.value.doctor_name}</b>`);
+    msg = msg.replace('{time}', `<b>${conflictData.value.existing_time}</b>`);
+    return msg;
+});
+
 const handleSubmit = async () => {
+   await submitWithForce(false);
+};
+
+const submitWithForce = async (force = false) => {
     try {
+        const payload = { ...form, force };
+        
         if (form.id) {
             // Update
-            await axios.put(`/api/bookings/${form.id}`, form);
+            await axios.put(`/api/bookings/${form.id}`, payload);
         } else {
             // Create
-            await axios.post('/api/bookings', form);
+            await axios.post('/api/bookings', payload);
         }
         
         emit('booking-saved'); // Notify parent to refresh calendar
@@ -174,10 +220,29 @@ const handleSubmit = async () => {
         const closeBtn = document.querySelector('#bookingCanvas .btn-close');
         if(closeBtn) closeBtn.click();
         
+        // Reset conflict state
+        showConflictModal.value = false;
+        conflictData.value = null;
+        
     } catch (error) {
-        console.error('Error saving booking:', error);
-        toastStore.add('Ошибка при сохранении: ' + (error.response?.data?.message || error.message), 'error', t.value.error_title);
+        if (error.response && error.response.status === 409) {
+            // Handle Double Booking
+            conflictData.value = error.response.data.conflict_data;
+            showConflictModal.value = true;
+        } else {
+            console.error('Error saving booking:', error);
+            toastStore.add('Ошибка при сохранении: ' + (error.response?.data?.message || error.message), 'error', t.value.error_title);
+        }
     }
+};
+
+const closeConflictModal = () => {
+    showConflictModal.value = false;
+    conflictData.value = null;
+};
+
+const confirmForceSave = () => {
+    submitWithForce(true);
 };
 
 const initiateDelete = () => {
@@ -209,6 +274,7 @@ const handleDelete = initiateDelete; // Alias for backward compatibility if need
 // Expose a method to reset/populate form
 const resetForm = (data = {}) => {
     showDeleteConfirm.value = false;
+    showConflictModal.value = false; // Reset conflict modal on open
     form.id = data.id || null;
     form.fullname = data.fullname || '';
     form.phone = data.phone || '';
@@ -216,10 +282,10 @@ const resetForm = (data = {}) => {
     form.doctor = data.doctor || '';
     
     // Fix: Format date for datetime-local (YYYY-MM-DDTHH:mm)
-    // Remove timezone and seconds if present
     if (data.datetime) {
         let dt = data.datetime;
-        // If ISO string with timezone, take first 16 chars: "2025-12-28T09:30"
+        // If it's the raw format YYYY-MM-DDTHH:mm, it fits perfectly.
+        // If it's ISO, take first 16 chars.
         if (dt.length > 16) {
              dt = dt.substring(0, 16);
         }
